@@ -120,7 +120,8 @@ SELECT * FROM detalleventa;
 │    ├── consulta_dos.jpg
 │    ├── consulta_tres.jpg
 │    ├── consulta_cuatro.jpg
-│    └── consulta_cinco.jpg
+│    ├── consulta_cinco.jpg
+│    └── eer_diagram.jpg
 └── 📁mysql
     ├── eer_diagram.mwb
     ├── 📁consultas
@@ -131,11 +132,12 @@ SELECT * FROM detalleventa;
     │   ├── consulta_tres.sql
     │   ├── consulta_tres_con_registros.sql
     │   ├── consulta_cuatro.sql
-    │   └── consulta_cuatro_con_registros.sql
+    │   ├── consulta_cuatro_con_registros.sql
+    │   ├── consulta_cinco.sql
+    │   └── todas_las_consultas.sql
     └── 📁tablas
         ├── insertando_datos_tablas.sql
         └── todas_las_tablas.sql
-
 ```
 
 **<h3>:blue_book: Consultas ejecutadas:</h3>**
@@ -150,12 +152,30 @@ ADD CONSTRAINT unique_nombreprod UNIQUE (nombreprod);
 
 2. Genere las consultas para convertir el campo idproducto en un campo de tipo autoincremental:
 ```SQL
+-- 1) Soltar la FK que apunta a producto.idproducto
+ALTER TABLE detalleventa
+  DROP FOREIGN KEY detalleventa_ibfk_2;
+
+-- 2) Volver autoincremental la PK en producto
+ALTER TABLE producto
+  MODIFY idproducto INT NOT NULL AUTO_INCREMENT;
+
+-- 3) Recrear la FK (puedes darle un nombre claro)
+ALTER TABLE detalleventa
+  ADD CONSTRAINT detalleventa_producto_FK
+  FOREIGN KEY (producto_idproducto)
+  REFERENCES producto(idproducto);
+
+-- 4) Convertir campo idproducto a autoincremental
 ALTER TABLE producto
 MODIFY idproducto INT NOT NULL AUTO_INCREMENT;
+
+-- 5) Verificar la estructura de la tabla
+SHOW CREATE TABLE producto;
 ```
 <img src="./img/consulta_dos.jpg" alt="consulta dos" style="width: 80%;">
 
-3. Genere las consultas para insertar cuatro productos en la base de datos. Recuerde hacer uso de la secuencia:
+3. Genere las consultas para insertar cuatro productos en la base de datos:
 ```SQL
 INSERT INTO producto (nombreprod, valor) VALUES
 ('Impresora', 85000.00),
@@ -168,15 +188,20 @@ INSERT INTO producto (nombreprod, valor) VALUES
 4. Genere las consultas para insertar ocho registros en la tabla detalleventa:
 
 ```SQL
+-- verifico los datos de los id antes de crear los nuevos registros
+SELECT idproducto, nombreprod FROM producto ORDER BY idproducto;
+SELECT idventa FROM ventas ORDER BY idventa;
+
+-- ingresando nuevos datos
 INSERT INTO detalleventa (ventas_idventa, producto_idproducto, cantidad) VALUES
-(1, 1, 2),
-(1, 2, 1),
-(1, 3, 1),
-(2, 2, 3),
-(2, 4, 1),
-(3, 1, 1),
-(3, 4, 2),
-(3, 5, 1);
+(4, 6, 2),
+(4, 7, 1),
+(4, 8, 1),
+(5, 6, 3),
+(5, 5, 1),
+(6, 7, 2),
+(6, 8, 2),
+(6, 5, 1);
 ```
 <img src="./img/consulta_cuatro.jpg" alt="consulta cuatro" style="width: 80%;">
 

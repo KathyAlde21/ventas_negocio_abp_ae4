@@ -2,3 +2,5 @@
 
 ALTER TABLE producto
 ADD CONSTRAINT unique_nombreprod UNIQUE (nombreprod);
+
+SELECT * FROM producto;
